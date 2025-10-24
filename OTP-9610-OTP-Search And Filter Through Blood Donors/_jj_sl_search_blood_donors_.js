@@ -12,11 +12,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/log'],
             try {
                 if (context.request.method === 'GET') {
                     displayForm(context);
-                } else {
-                    displayForm(context);
                 }
             } catch (e) {
-                log.error('Error in onRequest', e.message);
+                log.error('Error Occured', e.message);
             }
         }
 
