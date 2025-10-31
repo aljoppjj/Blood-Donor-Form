@@ -3,18 +3,6 @@
  * @NScriptType ClientScript
  */
 define(['N/ui/dialog'], function (dialog) {
-
-    /**
-     * Triggered when the page is initialized.
-     * Useful for setting up default behaviors or logging.
-     * 
-     * @param {Object} context - The context object for the page initialization.
-     * @param {Record} context.currentRecord - The current NetSuite record on the page.
-     */
-    function pageInit(context) {
-        console.log('Client Script Loaded');
-    }
-
     /**
      * Validates the selected donation date.
      * Ensures the date is not in the future and is at least 90 days old.
