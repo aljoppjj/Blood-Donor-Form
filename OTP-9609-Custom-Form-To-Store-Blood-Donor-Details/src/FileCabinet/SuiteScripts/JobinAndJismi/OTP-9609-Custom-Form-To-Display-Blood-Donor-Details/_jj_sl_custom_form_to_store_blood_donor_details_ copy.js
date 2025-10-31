@@ -5,8 +5,13 @@
 define(['N/ui/serverWidget', 'N/record', 'N/log'],
     function (serverWidget, record, log) {
 
+        /**
+         * Entry point for Suitelet execution.
+         * @param {Object} context - The Suitelet context object.
+         * @param {ServerRequest} context.request - The incoming request object.
+         * @param {ServerResponse} context.response - The outgoing response object.
+         */
         function onRequest(context) {
-        
             try {
                 if (context.request.method === 'GET') {
                     displayForm(context);
@@ -18,6 +23,11 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
             }
         }
 
+        /**
+         * Displays the blood donor registration form.
+         * @param {Object} context - The Suitelet context object.
+         * @param {ServerResponse} context.response - The outgoing response object.
+         */
         function displayForm(context) {
             const form = serverWidget.createForm({
                 title: 'Blood Donor Registration Form'
@@ -71,14 +81,20 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
             context.response.writePage(form);
         }
 
+        /**
+         * Saves the submitted donor record and displays confirmation or error.
+         * @param {Object} context - The Suitelet context object.
+         * @param {ServerRequest} context.request - The incoming request object containing form parameters.
+         * @param {ServerResponse} context.response - The outgoing response object.
+         */
         function saveRecord(context) {
             try {
                 const params = context.request.parameters;
-                
+
                 const donationDate = new Date(params['custrecord_jj_last_donation_date_']);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                
+
                 if (donationDate > today) {
                     throw new Error('Last Donation Date cannot be a future date.');
                 }
