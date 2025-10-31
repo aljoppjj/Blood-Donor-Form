@@ -8,16 +8,33 @@ define(['N/ui/serverWidget', 'N/search', 'N/log'],
         const CUSTOM_RECORD_TYPE = 'customrecord_jj_blood_donor_';
         const CLIENT_SCRIPT_PATH = './_jj_cs_last_donation_date_validation_.js';
 
+        /**
+         * Entry point for the Suitelet script.
+         * Handles both GET and POST requests by displaying the donor search form.
+         * 
+         * @param {Object} context - Suitelet context object.
+         * @param {ServerRequest} context.request - Incoming request object.
+         * @param {ServerResponse} context.response - Outgoing response object.
+         */
         function onRequest(context) {
             try {
                 if (context.request.method === 'GET') {
                     displayForm(context);
+                } else {
+                    displayForm(context);
                 }
             } catch (e) {
-                log.error('Error Occured', e.message);
+                log.error('Error in onRequest', e.message);
             }
         }
 
+        /**
+         * Displays the blood donor search form and shows results if search parameters are provided.
+         * 
+         * @param {Object} context - Suitelet context object.
+         * @param {ServerRequest} context.request - Incoming request object containing search parameters.
+         * @param {ServerResponse} context.response - Outgoing response object to render the form and results.
+         */
         function displayForm(context) {
             const form = serverWidget.createForm({
                 title: 'Blood Donor Search'
@@ -68,11 +85,11 @@ define(['N/ui/serverWidget', 'N/search', 'N/log'],
                     const donors = [];
                     donorSearch.run().each(function(result) {
                         donors.push({
-                            name: (result.getValue('custrecord_jj_fname_')) + ' ' + 
-                                  (result.getValue('custrecord_jj_lname_')),
-                            phone: result.getValue('custrecord_jj_phone_number_'),
-                            bloodGroup: result.getText('custrecord_jj_blood_group_'),
-                            lastDonation: result.getValue('custrecord_jj_last_donation_date_')
+                            name: (result.getValue('custrecord_jj_fname_') || '') + ' ' + 
+                                  (result.getValue('custrecord_jj_lname_') || ''),
+                            phone: result.getValue('custrecord_jj_phone_number_') || 'N/A',
+                            bloodGroup: result.getText('custrecord_jj_blood_group_') || 'N/A',
+                            lastDonation: result.getValue('custrecord_jj_last_donation_date_') || 'N/A'
                         });
                         return true;
                     });
