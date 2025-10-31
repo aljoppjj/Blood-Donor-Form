@@ -71,7 +71,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/log'],
                         filters: [
                             ['custrecord_jj_blood_group_', 'anyof', selectedBloodGroup],
                             'AND',
-                            ['custrecord_jj_last_donation_date_', 'onorbefore', selectedDate]
+                            ['custrecord_jj_last_donation_date_', 'on', selectedDate]
                         ],
                         columns: [
                             'custrecord_jj_fname_',
