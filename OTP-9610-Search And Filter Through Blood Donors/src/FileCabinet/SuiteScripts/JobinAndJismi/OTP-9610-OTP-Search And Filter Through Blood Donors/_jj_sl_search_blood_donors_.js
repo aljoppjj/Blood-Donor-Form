@@ -53,7 +53,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/log'],
             const lastDonationDate = form.addField({
                 id: 'custpage_last_donation_date',
                 type: serverWidget.FieldType.DATE,
-                label: 'Last Donation Date (Before)'
+                label: 'Last Donation Date'
             });
             lastDonationDate.isMandatory = true;
 
