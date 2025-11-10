@@ -2,6 +2,27 @@
  * @NApiVersion 2.1
  * @NScriptType Suitelet
  */
+ 
+/************************************************************************************************
+ *  
+ * OTP-9609 : Custom Form To Store Blood Donor Details
+ *
+*************************************************************************************************
+ *
+ * Author: Jobin and Jismi IT Services
+ *
+ * Date Created : 22-October-2025
+ *
+ * Description : This script creates a custom NetSuite form to record blood donor requirements from various users. 
+ *               It provides a structured data entry interface for company employees to capture donor details 
+ *               including First Name,Last Name, Gender, Phone Number, Blood Group, and Last Donation Date.
+ *
+ *
+ * REVISION HISTORY
+ *
+ * @version 1.0 : 22-October-2025 :  The initial build was created by JJ0417
+ *
+*************************************************************************************************/
 define(['N/ui/serverWidget', 'N/record', 'N/log'],
     function (serverWidget, record, log) {
 
