@@ -50,56 +50,61 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
          * @param {ServerResponse} context.response - The outgoing response object.
          */
         function displayForm(context) {
-            const form = serverWidget.createForm({
-                title: 'Blood Donor Registration Form'
-            });
+            try {
+                const form = serverWidget.createForm({
+                    title: 'Blood Donor Registration Form'
+                });
 
-            const firstName = form.addField({
-                id: 'custrecord_jj_fname_',
-                type: serverWidget.FieldType.TEXT,
-                label: 'First Name'
-            });
-            firstName.isMandatory = true;
+                const firstName = form.addField({
+                    id: 'custrecord_jj_fname_',
+                    type: serverWidget.FieldType.TEXT,
+                    label: 'First Name'
+                });
+                firstName.isMandatory = true;
 
-            const lastName = form.addField({
-                id: 'custrecord_jj_lname_',
-                type: serverWidget.FieldType.TEXT,
-                label: 'Last Name'
-            });
-            lastName.isMandatory = true;
+                const lastName = form.addField({
+                    id: 'custrecord_jj_lname_',
+                    type: serverWidget.FieldType.TEXT,
+                    label: 'Last Name'
+                });
+                lastName.isMandatory = true;
 
-            const gender = form.addField({
-                id: 'custrecord_jj_gender_',
-                type: serverWidget.FieldType.SELECT,
-                label: 'Gender',
-                source: 'customlist_jj_gender_list_'
-            });
-            gender.isMandatory = true;
+                const gender = form.addField({
+                    id: 'custrecord_jj_gender_',
+                    type: serverWidget.FieldType.SELECT,
+                    label: 'Gender',
+                    source: 'customlist_jj_gender_list_'
+                });
+                gender.isMandatory = true;
 
-            const phone = form.addField({
-                id: 'custrecord_jj_phone_number_',
-                type: serverWidget.FieldType.PHONE,
-                label: 'Phone Number'
-            });
-            phone.isMandatory = true;
+                const phone = form.addField({
+                    id: 'custrecord_jj_phone_number_',
+                    type: serverWidget.FieldType.PHONE,
+                    label: 'Phone Number'
+                });
+                phone.isMandatory = true;
 
-            const bloodGroup = form.addField({
-                id: 'custrecord_jj_blood_group_',
-                type: serverWidget.FieldType.SELECT,
-                label: 'Blood Group',
-                source: 'customlist_jj_blood_group_'
-            });
-            bloodGroup.isMandatory = true;
+                const bloodGroup = form.addField({
+                    id: 'custrecord_jj_blood_group_',
+                    type: serverWidget.FieldType.SELECT,
+                    label: 'Blood Group',
+                    source: 'customlist_jj_blood_group_'
+                });
+                bloodGroup.isMandatory = true;
 
-            form.addField({
-                id: 'custrecord_jj_last_donation_date_',
-                type: serverWidget.FieldType.DATE,
-                label: 'Last Donation Date'
-            }).isMandatory = true;
+                form.addField({
+                    id: 'custrecord_jj_last_donation_date_',
+                    type: serverWidget.FieldType.DATE,
+                    label: 'Last Donation Date'
+                }).isMandatory = true;
 
-            form.addSubmitButton({ label: 'Submit' });
+                form.addSubmitButton({ label: 'Submit' });
 
-            context.response.writePage(form);
+                context.response.writePage(form);
+            } catch (e) {
+                log.error('Error in displayForm', e.message || e.toString());
+                throw e;
+            }
         }
 
         /**
@@ -155,7 +160,9 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
                     value: donationDate
                 });
 
-                const recordId = donorRecord.save();
+                const recordId = donorRecord.save({
+                    ignoreMandatoryFields: false
+                });
 
                 const form = serverWidget.createForm({
                     title: 'Blood Donor Registration'
