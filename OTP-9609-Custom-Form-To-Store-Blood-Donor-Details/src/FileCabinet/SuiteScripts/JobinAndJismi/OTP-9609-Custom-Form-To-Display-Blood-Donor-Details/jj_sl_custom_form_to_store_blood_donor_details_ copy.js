@@ -23,8 +23,8 @@
  * @version 1.0 : 22-October-2025 :  The initial build was created by JJ0417
  *
 *************************************************************************************************/
-define(['N/ui/serverWidget', 'N/record', 'N/log'],
-    function (serverWidget, record, log) {
+define(['N/ui/serverWidget', 'N/record', 'N/log', 'N/search'],
+    function (serverWidget, record, log, search) {
 
         /**
          * Entry point for Suitelet execution.
@@ -108,6 +108,51 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
         }
 
         /**
+         * Validates phone number format and length.
+         * Accepts formats: 10 digits (9876543210) or with country code (+919876543210, 919876543210)
+         * @param {string} phoneNumber - The phone number to validate.
+         * @returns {boolean} - Returns true if valid, false otherwise.
+         */
+        function validatePhoneNumber(phoneNumber) {
+            // Remove whitespace, hyphens, and parentheses
+            const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
+            
+            // Phone number 10 digits plus +91 etc country code also
+            const phoneRegex = /^(\+?\d{1,3})?\d{10}$/;
+            
+            if (!phoneRegex.test(cleanPhone)) {
+                return false;
+            }
+            
+            // Ensure the phone number has at least 10 digits and max 13 (with country code)
+            const digitsOnly = cleanPhone.replace(/\D/g, '');
+            return digitsOnly.length >= 10 && digitsOnly.length <= 13;
+        }
+
+        /**
+         * Checks if a phone number already exists in the blood donor records.
+         * @param {string} phoneNumber - The phone number to check for duplicates.
+         * @returns {boolean} - Returns true if duplicate exists, false otherwise.
+         */
+        function isDuplicatePhone(phoneNumber) {
+            try {
+                const donorSearch = search.create({
+                    type: 'customrecord_jj_blood_donor_',
+                    filters: [
+                        ['custrecord_jj_phone_number_', 'is', phoneNumber]
+                    ],
+                    columns: ['internalid']
+                });
+
+                const resultCount = donorSearch.runPaged().count;
+                return resultCount > 0;
+            } catch (e) {
+                log.error('Error checking duplicate phone', e.message || e.toString());
+                return false;
+            }
+        }
+
+        /**
          * Saves the submitted donor record and displays confirmation or error.
          * @param {Object} context - The Suitelet context object.
          * @param {ServerRequest} context.request - The incoming request object containing form parameters.
@@ -116,6 +161,17 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
         function saveRecord(context) {
             try {
                 const params = context.request.parameters;
+
+                // Validate phone number format
+                const phoneNumber = params['custrecord_jj_phone_number_'] || '';
+                if (!validatePhoneNumber(phoneNumber)) {
+                    throw new Error('Invalid phone number. Please enter 10 digits (e.g., 9876543210) or with country code (e.g., +919876543210).');
+                }
+
+                // Check for duplicate phone number
+                if (isDuplicatePhone(phoneNumber)) {
+                    throw new Error('A donor with this phone number already exists. Phone numbers must be unique.');
+                }
 
                 const donationDate = new Date(params['custrecord_jj_last_donation_date_']);
                 const today = new Date();
@@ -147,7 +203,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/log'],
 
                 donorRecord.setValue({
                     fieldId: 'custrecord_jj_phone_number_',
-                    value: params['custrecord_jj_phone_number_'] || ''
+                    value: phoneNumber
                 });
 
                 donorRecord.setValue({
